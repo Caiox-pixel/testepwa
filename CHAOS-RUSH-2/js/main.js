@@ -15,14 +15,15 @@ const config = {
 
   scale: {
     mode: Phaser.Scale.FIT,
+    orientation: Phaser.Scale.PORTRAIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     expandParent: true,
     fullscreenTarget: 'parent',
-    width: 1280,
-    height: 720,
+    width: 720,
+    height: 1280,
     min: {
       width: 320,
-      height: 180
+      height: 568
     }
   },
 
@@ -56,6 +57,37 @@ const config = {
 };
 
 window.game = new Phaser.Game(config);
+
+const lockPortraitOrientation = () => {
+  const screenOrientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
+  const desired = 'portrait-primary';
+
+  if (screenOrientation && screenOrientation.lock) {
+    screenOrientation.lock(desired).then(() => {
+      console.log('[PWA] Orientação travada em retrato');
+    }).catch(err => {
+      console.warn('[PWA] Falha ao travar retrato:', err);
+    });
+  } else {
+    const lock = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+    if (typeof lock === 'function') {
+      if (lock(desired)) {
+        console.log('[PWA] Orientação retrato aplicada (legacy)');
+      } else {
+        console.warn('[PWA] Lock de orientação retrato não suportado');
+      }
+    }
+  }
+};
+
+window.addEventListener('load', () => {
+  lockPortraitOrientation();
+  if (window.game && window.game.scale) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    window.game.scale.resize(width, height);
+  }
+});
 
 // Redimensionar jogo quando janela mudar
 window.addEventListener('resize', () => {

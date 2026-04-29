@@ -114,8 +114,11 @@ export default class RegisterScene extends Phaser.Scene {
       this.time.delayedCall(2000, () => this.scene.start('LoginScene'));
     });
 
-    const loginLink = this.add.text(width / 2, height - 60, 'Já tem conta? Faça login.', {
-      fontSize: '16px', color: '#cccccc'
+    const loginLink = this.add.text(panelX, panelY + panelHeight / 2 - 30, 'Já tem conta? Faça login.', {
+      fontSize: '14px',
+      color: '#cccccc',
+      align: 'center',
+      wordWrap: { width: panelWidth - 40 }
     }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
     loginLink.on('pointerdown', () => {

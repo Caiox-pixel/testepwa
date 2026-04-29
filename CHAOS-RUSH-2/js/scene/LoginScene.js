@@ -97,8 +97,11 @@ export default class LoginScene extends Phaser.Scene {
       this.time.delayedCall(700, () => this.scene.start('MenuScene'));
     });
 
-    const registerLink = this.add.text(width/2, height-60, 'Ainda não tem conta? Registrar', {
-      fontSize:'16px', color:'#cccccc'
+    const registerLink = this.add.text(panelX, panelY + panelHeight / 2 - 30, 'Ainda não tem conta? Registrar', {
+      fontSize:'14px',
+      color:'#cccccc',
+      align:'center',
+      wordWrap: { width: panelWidth - 40 }
     }).setOrigin(0.5).setInteractive({ useHandCursor:true });
 
     registerLink.on('pointerdown', () => {

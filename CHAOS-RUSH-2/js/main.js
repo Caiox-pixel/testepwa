@@ -15,7 +15,7 @@ const config = {
 
   scale: {
     mode: Phaser.Scale.FIT,
-    orientation: Phaser.Scale.PORTRAIT,
+    orientation: 'portrait-primary',
     autoCenter: Phaser.Scale.CENTER_BOTH,
     expandParent: true,
     fullscreenTarget: 'parent',
@@ -24,7 +24,8 @@ const config = {
     min: {
       width: 320,
       height: 568
-    }
+    },
+    autoRound: true
   },
 
   render: {
@@ -104,42 +105,39 @@ const updatePortraitOverlay = () => {
   overlay.classList.toggle('hidden', !isLandscape);
 };
 
+const resizeGame = () => {
+  updatePortraitOverlay();
+
+  if (!window.game || !window.game.scale) {
+    return;
+  }
+
+  const width = document.documentElement.clientWidth || window.innerWidth;
+  const height = document.documentElement.clientHeight || window.innerHeight;
+
+  window.game.scale.resize(width, height);
+  if (window.game.scale.refresh) {
+    window.game.scale.refresh();
+  }
+};
+
 window.addEventListener('load', () => {
   lockPortraitOrientation();
   updatePortraitOverlay();
   resumeAudioOnGesture();
-  if (window.game && window.game.scale) {
-    window.game.scale.resize(window.innerWidth, window.innerHeight);
-  }
+  resizeGame();
 });
 
-// Redimensionar jogo quando janela mudar
-window.addEventListener('resize', () => {
-  updatePortraitOverlay();
-  if (window.game && window.game.scale) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    window.game.scale.resize(width, height);
-    if (window.game.scale.refresh) {
-      window.game.scale.refresh();
-    }
-  }
-});
-
-// Lidar com orientação
+window.addEventListener('resize', resizeGame);
 window.addEventListener('orientationchange', () => {
-  updatePortraitOverlay();
-  if (window.game && window.game.scale) {
-    setTimeout(() => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      window.game.scale.resize(width, height);
-      if (window.game.scale.refresh) {
-        window.game.scale.refresh();
-      }
-    }, 200);
-  }
+  setTimeout(resizeGame, 200);
 });
+
+if (screen.orientation && typeof screen.orientation.addEventListener === 'function') {
+  screen.orientation.addEventListener('change', () => {
+    setTimeout(resizeGame, 200);
+  });
+}
 
 // Detectar instalação do PWA
 let deferredPrompt;

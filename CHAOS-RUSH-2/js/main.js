@@ -16,8 +16,6 @@ const config = {
   scale: {
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: window.innerWidth,
-    height: window.innerHeight,
     expandParent: true,
     fullscreenTarget: 'parent',
     min: {
@@ -46,3 +44,10 @@ const config = {
 };
 
 window.game = new Phaser.Game(config);
+
+// Redimensionar jogo quando janela mudar
+window.addEventListener('resize', () => {
+  if (window.game && window.game.isRunning()) {
+    window.game.scale.refresh();
+  }
+});

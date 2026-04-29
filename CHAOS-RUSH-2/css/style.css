@@ -1,5 +1,9 @@
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 html,
@@ -10,6 +14,14 @@ body {
     overflow: hidden;
     width: 100%;
     height: 100%;
+    position: fixed;
+    font-family: Arial, sans-serif;
+    
+    /* Suporte para notch (iPhone X+) */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 #game-container {
@@ -18,8 +30,31 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
 
 canvas {
     display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+}
+
+/* Suporte para modos dark/light */
+@media (prefers-color-scheme: dark) {
+    body {
+        background: #1a1a1a;
+        color: #ffffff;
+    }
+}
+
+/* Media query para landscape */
+@media (orientation: landscape) and (max-height: 500px) {
+    body {
+        padding-top: 0;
+    }
 }

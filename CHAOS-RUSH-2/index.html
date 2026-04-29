@@ -3,21 +3,25 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Chaos Rush" />
 
   <title>Chaos Rush</title>
 
   <link rel="stylesheet" href="./css/style.css">
-
-  <link rel="shortcut icon"
-    href="./assets/icon-192.png"
-    type="image/x-icon">
-
   <link rel="manifest" href="./manifest.json">
+  
+  <link rel="shortcut icon" href="./assets/icon-192.png" type="image/x-icon">
+  <link rel="apple-touch-icon" href="./assets/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./assets/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="512x512" href="./assets/icon-512.png" />
 
-  <meta name="theme-color" content="#000000">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#1a1a1a">
+  <meta name="description" content="Um jogo de sobrevivência roguelike com mecânicas de poder">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-config" content="none">
 </head>
 
 <body>
@@ -29,11 +33,41 @@
   <script type="module" src="./js/main.js"></script>
 
   <script>
+    // Registrar Service Worker
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./service-worker.js")
-        .then(() => console.log("Service Worker ativo"))
-        .catch(err => console.log(err));
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js")
+          .then(reg => {
+            console.log("[PWA] Service Worker registrado", reg);
+            setInterval(() => {
+              reg.update().catch(err => console.error("Erro ao atualizar SW:", err));
+            }, 60000);
+          })
+          .catch(err => console.error("[PWA] Erro ao registrar SW:", err));
+      });
     }
+
+    // Prevenir comportamentos padrão do navegador
+    document.addEventListener("touchmove", e => {
+      if (e.target.closest("#game-container")) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    let lastTouchEnd = 0;
+    document.addEventListener("touchend", e => {
+      const now = Date.now();
+      if (now - lastTouchEnd <= 300) {
+        e.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+
+    document.addEventListener("contextmenu", e => {
+      if (e.target.closest("#game-container")) {
+        e.preventDefault();
+      }
+    });
   </script>
 
 </body>

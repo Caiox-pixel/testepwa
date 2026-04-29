@@ -25,13 +25,23 @@ const config = {
   },
 
   render: {
-    pixelArt: true
+    pixelArt: true,
+    antialias: false,
+    autoCenter: Phaser.Scale.CENTER_BOTH
   },
 
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false
+      debug: false,
+      fps: 60
+    }
+  },
+
+  input: {
+    queue: true,
+    touch: {
+      target: window
     }
   },
 
@@ -50,4 +60,36 @@ window.addEventListener('resize', () => {
   if (window.game && window.game.isRunning()) {
     window.game.scale.refresh();
   }
+});
+
+// Lidar com orientação
+window.addEventListener('orientationchange', () => {
+  if (window.game && window.game.isRunning()) {
+    setTimeout(() => {
+      window.game.scale.refresh();
+    }, 100);
+  }
+});
+
+// Detectar instalação do PWA
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  console.log("[PWA] Install prompt disponível");
+});
+
+window.addEventListener('appinstalled', () => {
+  console.log("[PWA] App instalado com sucesso!");
+  deferredPrompt = null;
+});
+
+// Notificar quando estiver online/offline
+window.addEventListener('online', () => {
+  console.log("[PWA] Online - Jogo disponível");
+});
+
+window.addEventListener('offline', () => {
+  console.log("[PWA] Offline - Usando cache");
 });

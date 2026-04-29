@@ -14,10 +14,12 @@ const config = {
   },
 
   scale: {
-    mode: Phaser.Scale.RESIZE,
+    mode: Phaser.Scale.FIT,
     autoCenter: Phaser.Scale.CENTER_BOTH,
     expandParent: true,
     fullscreenTarget: 'parent',
+    width: 1280,
+    height: 720,
     min: {
       width: 320,
       height: 180
@@ -58,6 +60,9 @@ window.game = new Phaser.Game(config);
 // Redimensionar jogo quando janela mudar
 window.addEventListener('resize', () => {
   if (window.game && window.game.isRunning()) {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    window.game.scale.resize(width, height);
     window.game.scale.refresh();
   }
 });
@@ -66,8 +71,11 @@ window.addEventListener('resize', () => {
 window.addEventListener('orientationchange', () => {
   if (window.game && window.game.isRunning()) {
     setTimeout(() => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      window.game.scale.resize(width, height);
       window.game.scale.refresh();
-    }, 100);
+    }, 200);
   }
 });
 

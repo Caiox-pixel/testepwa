@@ -4,7 +4,7 @@
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
+  "orientation": "landscape-primary",
   "background_color": "#1a1a1a",
   "theme_color": "#1a1a1a",
   "description": "Um jogo de sobrevivência roguelike com mecânicas de poder",

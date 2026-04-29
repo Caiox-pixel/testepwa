@@ -6,7 +6,27 @@ const FILES_TO_CACHE = [
   "./index.html",
   "./css/style.css",
   "./js/phaser.min.js",
-  "./js/main.js"
+  "./js/main.js",
+  "./js/VirtualJoystick.js",
+  "./js/scene/LoginScene.js",
+  "./js/scene/RegisterScene.js",
+  "./js/scene/MenuScene.js",
+  "./js/scene/MainScene.js",
+  "./js/entities/Player/player.js",
+  "./js/entities/Player/PlayerClass.js",
+  "./js/entities/Player/StatsPlayer.js",
+  "./js/entities/Player/DamagePlayer.js",
+  "./js/XPOrb.js",
+  "./js/entities/Enemy/enemy.js",
+  "./js/entities/Enemy/EnemyBullet.js",
+  "./js/systems/UpgradeSystem.js",
+  "./js/systems/ClassSystems.js",
+  "./js/systems/WeaponSystem.js",
+  "./js/systems/PassiveSystem/PassiveSystem.js",
+  "./js/systems/PassiveSystem/PassiveAlquimista.js",
+  "./js/systems/PassiveSystem/PassiveCoveiro.js",
+  "./js/systems/PassiveSystem/PassiveSentinela.js",
+  "./js/Director/SpawnDirector.js"
 ];
 
 self.addEventListener("install", event => {

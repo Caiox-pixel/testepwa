@@ -77,6 +77,26 @@ const lockPortraitOrientation = () => {
   }
 };
 
+const resumeAudioOnGesture = () => {
+  const resume = () => {
+    if (window.game && window.game.sound && window.game.sound.context) {
+      const context = window.game.sound.context;
+      if (context.state === 'suspended' && typeof context.resume === 'function') {
+        context.resume().then(() => {
+          console.log('[PWA] Audio liberado após gesto do usuário');
+        }).catch(err => {
+          console.warn('[PWA] Falha ao resumir áudio:', err);
+        });
+      }
+    }
+    window.removeEventListener('pointerdown', resume);
+    window.removeEventListener('touchstart', resume);
+  };
+
+  window.addEventListener('pointerdown', resume, { once: true });
+  window.addEventListener('touchstart', resume, { once: true });
+};
+
 const updatePortraitOverlay = () => {
   const overlay = document.getElementById('orientation-lock-overlay');
   if (!overlay) return;
@@ -87,6 +107,7 @@ const updatePortraitOverlay = () => {
 window.addEventListener('load', () => {
   lockPortraitOrientation();
   updatePortraitOverlay();
+  resumeAudioOnGesture();
   if (window.game && window.game.scale) {
     window.game.scale.resize(window.innerWidth, window.innerHeight);
   }
@@ -124,8 +145,25 @@ window.addEventListener('orientationchange', () => {
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
   deferredPrompt = e;
   console.log("[PWA] Install prompt disponível");
+
+  const promptInstall = () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choiceResult => {
+      console.log('[PWA] Resultado do prompt de instalação:', choiceResult.outcome);
+      deferredPrompt = null;
+    }).catch(err => {
+      console.warn('[PWA] Falha ao exibir prompt de instalação:', err);
+    });
+    window.removeEventListener('pointerdown', promptInstall);
+    window.removeEventListener('touchstart', promptInstall);
+  };
+
+  window.addEventListener('pointerdown', promptInstall, { once: true });
+  window.addEventListener('touchstart', promptInstall, { once: true });
 });
 
 window.addEventListener('appinstalled', () => {

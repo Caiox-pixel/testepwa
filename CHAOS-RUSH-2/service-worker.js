@@ -57,37 +57,31 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   const { request } = event;
-  const url = new URL(request.url);
 
   if (request.method !== "GET") {
     return;
   }
 
-  // Assets: network first com fallback para cache
-  if (url.pathname.includes("/assets/")) {
-    event.respondWith(
-      fetch(request).then(response => {
-        if (response.ok) {
-          caches.open(RUNTIME_CACHE).then(cache => {
-            cache.put(request, response.clone());
-          });
+  event.respondWith(
+    caches.match(request).then(cachedResponse => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+
+      return fetch(request).then(networkResponse => {
+        if (!networkResponse || !networkResponse.ok) {
+          return networkResponse;
         }
-        return response;
-      }).catch(() => caches.match(request))
-    );
-  } else {
-    // Arquivos estáticos: cache first
-    event.respondWith(
-      caches.match(request).then(response => {
-        return response || fetch(request).then(response => {
-          if (response.ok) {
-            caches.open(RUNTIME_CACHE).then(cache => {
-              cache.put(request, response.clone());
-            });
-          }
-          return response;
-        }).catch(() => new Response("Offline", { status: 503 }));
-      })
-    );
-  }
+
+        const responseClone = networkResponse.clone();
+        caches.open(RUNTIME_CACHE).then(cache => {
+          cache.put(request, responseClone).catch(err => {
+            console.warn('[Service Worker] Falha ao armazenar em cache:', err);
+          });
+        });
+
+        return networkResponse;
+      }).catch(() => caches.match(request) || new Response("Offline", { status: 503 }));
+    })
+  );
 });

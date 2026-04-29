@@ -8,6 +8,7 @@ import WeaponSystem from "../systems/WeaponSystem.js";
 import SpawnDirector from "../Director/SpawnDirector.js";
 import { PLAYER_CLASSES } from "../entities/Player/PlayerClass.js";
 import EnemyBullet from "../entities/Enemy/EnemyBullet.js";
+import VirtualJoystick from "../VirtualJoystick.js";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -176,6 +177,8 @@ this.add.image(0, 0, 'map')
     console.log("Chamando startGame...");
     this.startGame(this.selectedClassKey);
 
+    // Joystick virtual (só aparece em touch/mobile)
+    this.joystick = new VirtualJoystick();
   }
 
 
@@ -343,6 +346,10 @@ this.add.image(0, 0, 'map')
     this.timerText.setText(
       `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
     );
+  }
+
+  shutdown() {
+    this.joystick?.destroy();
   }
 
   getClosestEnemy(maxRange = Infinity) {

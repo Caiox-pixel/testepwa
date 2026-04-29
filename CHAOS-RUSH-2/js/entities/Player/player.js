@@ -139,20 +139,27 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   handleMovement() {
-
     const { up, down, left, right } = this.keys;
 
     let vx = 0;
     let vy = 0;
 
-    if (up.isDown) vy = -1;
-    else if (down.isDown) vy = 1;
+    // ── teclado (WASD) ──
+    if (up.isDown)    vy = -1;
+    else if (down.isDown)  vy =  1;
 
-    if (left.isDown) vx = -1;
-    else if (right.isDown) vx = 1;
+    if (left.isDown)  vx = -1;
+    else if (right.isDown) vx =  1;
+
+    // ── joystick virtual (mobile) ──
+    const joy = this.scene?.joystick;
+    if (joy?.active) {
+      // joystick sobrescreve teclado quando ativo
+      vx = joy.vx;
+      vy = joy.vy;
+    }
 
     const speed = this.dashing ? this.speed * 3 : this.speed;
-
     const vec = new Phaser.Math.Vector2(vx, vy).normalize();
     this.setVelocity(vec.x * speed, vec.y * speed);
 
@@ -161,7 +168,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     this.updateAnimations(vx, vy);
-
   }
 
   getFacingDirection(vx, vy) {
@@ -173,8 +179,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   handleDash() {
     if (!this.canAttack) return;
 
-    if (this.keys.dash.isDown && !this.dashing && !this.dashCooldown) {
-      this.dashing = true;
+    const joyDash = this.scene?.joystick?.dashPressed;
+    const keyDash = this.keys.dash.isDown;
+
+    if ((keyDash || joyDash) && !this.dashing && !this.dashCooldown) {
+      // consome o sinal do joystick para não repetir
+      this.scene?.joystick?.consumeDash();
+
+      this.dashing     = true;
       this.dashCooldown = true;
 
       this.scene.time.delayedCall(150, () => {

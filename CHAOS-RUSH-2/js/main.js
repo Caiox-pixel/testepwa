@@ -4,6 +4,15 @@ import MenuScene from './scene/MenuScene.js';
 import MainScene from './scene/MainScene.js';
 import VirtualJoystick from './VirtualJoystick.js';
 
+// Detecta dimensões reais do device
+const getGameDimensions = () => {
+  const w = Math.max(document.documentElement.clientWidth, window.innerWidth) || 393;
+  const h = Math.max(document.documentElement.clientHeight, window.innerHeight) || 873;
+  return { width: w, height: h };
+};
+
+const { width: initialWidth, height: initialHeight } = getGameDimensions();
+
 const config = {
   type: Phaser.AUTO,
 
@@ -14,13 +23,13 @@ const config = {
   },
 
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     orientation: 'portrait-primary',
     autoCenter: Phaser.Scale.CENTER_BOTH,
     expandParent: true,
     fullscreenTarget: 'parent',
-    width: 720,
-    height: 1280,
+    width: initialWidth,
+    height: initialHeight,
     min: {
       width: 320,
       height: 568

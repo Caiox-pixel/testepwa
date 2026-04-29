@@ -59,38 +59,42 @@ const config = {
 window.game = new Phaser.Game(config);
 
 const lockPortraitOrientation = () => {
-  const screenOrientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
   const desired = 'portrait-primary';
+  const screenOrientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
+  const lockFn = screenOrientation?.lock || screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
 
-  if (screenOrientation && screenOrientation.lock) {
-    screenOrientation.lock(desired).then(() => {
-      console.log('[PWA] Orientação travada em retrato');
-    }).catch(err => {
-      console.warn('[PWA] Falha ao travar retrato:', err);
-    });
-  } else {
-    const lock = screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
-    if (typeof lock === 'function') {
-      if (lock(desired)) {
-        console.log('[PWA] Orientação retrato aplicada (legacy)');
-      } else {
-        console.warn('[PWA] Lock de orientação retrato não suportado');
+  if (typeof lockFn === 'function') {
+    try {
+      const lockTarget = screenOrientation || screen;
+      const result = lockFn.call(lockTarget, desired);
+      if (result && typeof result.then === 'function') {
+        result.then(() => console.log('[PWA] Orientação travada em retrato'))
+          .catch(err => console.warn('[PWA] Falha ao travar retrato:', err));
       }
+    } catch (err) {
+      console.warn('[PWA] Orientação retrato não pôde ser aplicada:', err);
     }
   }
 };
 
+const updatePortraitOverlay = () => {
+  const overlay = document.getElementById('orientation-lock-overlay');
+  if (!overlay) return;
+  const isLandscape = window.innerWidth > window.innerHeight;
+  overlay.classList.toggle('hidden', !isLandscape);
+};
+
 window.addEventListener('load', () => {
   lockPortraitOrientation();
+  updatePortraitOverlay();
   if (window.game && window.game.scale) {
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    window.game.scale.resize(width, height);
+    window.game.scale.resize(window.innerWidth, window.innerHeight);
   }
 });
 
 // Redimensionar jogo quando janela mudar
 window.addEventListener('resize', () => {
+  updatePortraitOverlay();
   if (window.game && window.game.scale) {
     const width = window.innerWidth;
     const height = window.innerHeight;
@@ -103,6 +107,7 @@ window.addEventListener('resize', () => {
 
 // Lidar com orientação
 window.addEventListener('orientationchange', () => {
+  updatePortraitOverlay();
   if (window.game && window.game.scale) {
     setTimeout(() => {
       const width = window.innerWidth;

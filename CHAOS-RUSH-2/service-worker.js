@@ -1,5 +1,5 @@
-const CACHE_NAME = "chaos-rush-v1";
-const RUNTIME_CACHE = "chaos-rush-runtime";
+const CACHE_NAME = "chaos-rush-v2";
+const RUNTIME_CACHE = "chaos-rush-runtime-v2";
 
 const FILES_TO_CACHE = [
   "./",
@@ -7,8 +7,11 @@ const FILES_TO_CACHE = [
   "./css/style.css",
   "./js/phaser.min.js",
   "./js/main.js",
+  "./js/supabaseClient.js",
   "./js/VirtualJoystick.js",
   "./js/scene/LoginScene.js",
+  "./assets/icon-192.png",
+  "./assets/icon-512.png",
   "./js/scene/RegisterScene.js",
   "./js/scene/MenuScene.js",
   "./js/scene/MainScene.js",
@@ -50,7 +53,7 @@ self.addEventListener("activate", event => {
           }
         })
       );
-    })
+    }).then(() => self.clients.claim())
   );
   self.clients.claim();
 });

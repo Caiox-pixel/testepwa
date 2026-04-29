@@ -1,7 +1,7 @@
 {
   "name": "Chaos Rush",
   "short_name": "ChaosRush",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "landscape-primary",

@@ -59,22 +59,26 @@ window.game = new Phaser.Game(config);
 
 // Redimensionar jogo quando janela mudar
 window.addEventListener('resize', () => {
-  if (window.game && window.game.isRunning()) {
+  if (window.game && window.game.scale) {
     const width = window.innerWidth;
     const height = window.innerHeight;
     window.game.scale.resize(width, height);
-    window.game.scale.refresh();
+    if (window.game.scale.refresh) {
+      window.game.scale.refresh();
+    }
   }
 });
 
 // Lidar com orientação
 window.addEventListener('orientationchange', () => {
-  if (window.game && window.game.isRunning()) {
+  if (window.game && window.game.scale) {
     setTimeout(() => {
       const width = window.innerWidth;
       const height = window.innerHeight;
       window.game.scale.resize(width, height);
-      window.game.scale.refresh();
+      if (window.game.scale.refresh) {
+        window.game.scale.refresh();
+      }
     }, 200);
   }
 });
@@ -83,7 +87,6 @@ window.addEventListener('orientationchange', () => {
 let deferredPrompt;
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
   deferredPrompt = e;
   console.log("[PWA] Install prompt disponível");
 });

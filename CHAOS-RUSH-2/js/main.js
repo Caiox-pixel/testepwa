@@ -14,10 +14,16 @@ const config = {
   },
 
   scale: {
-    mode: Phaser.Scale.FIT,
+    mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1280,
-    height: 720
+    width: window.innerWidth,
+    height: window.innerHeight,
+    expandParent: true,
+    fullscreenTarget: 'parent',
+    min: {
+      width: 320,
+      height: 180
+    }
   },
 
   render: {

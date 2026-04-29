@@ -9,42 +9,66 @@ export default class RegisterScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor('#080a10');
 
-    this.add.text(width / 2, 80, 'CHAOS RUSH', {
-      fontSize: '52px', color: '#00ffff', fontStyle: 'bold'
+    const panelWidth = Math.min(520, width * 0.9);
+    const panelHeight = Math.min(520, height * 0.88);
+    const inputWidth = Math.min(320, panelWidth - 80);
+    const titleSize = width < 420 ? '42px' : '52px';
+    const subtitleSize = width < 420 ? '28px' : '34px';
+    const panelX = width / 2;
+    const panelY = height / 2;
+
+    this.add.text(panelX, 80, 'CHAOS RUSH', {
+      fontSize: titleSize,
+      color: '#00ffff',
+      fontStyle: 'bold'
     }).setOrigin(0.5);
 
-    this.add.rectangle(width / 2, height / 2, 520, 520, 0x000000, 0.65)
+    this.add.rectangle(panelX, panelY, panelWidth, panelHeight, 0x000000, 0.65)
       .setStrokeStyle(2, 0x00ffff);
 
-    this.add.text(width / 2, 220, 'REGISTRE-SE', {
-      fontSize: '34px', color: '#ffffff', fontStyle: 'bold', fontFamily: 'Tektur'
-    }).setOrigin(0.6);
-
-    const nome = this.add.dom(width / 2, 300).createFromHTML(`
-      <input id='nome' type='text' placeholder='Nome' style='width:320px;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff;'>
-    `);
-
-    const email = this.add.dom(width / 2, 360).createFromHTML(`
-      <input id='email' type='email' placeholder='E-mail' style='width:320px;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff;'>
-    `);
-
-    const senha = this.add.dom(width / 2, 420).createFromHTML(`
-      <input id='senha' type='password' placeholder='Senha' style='width:320px;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff;'>
-    `);
-
-    const confirmar = this.add.dom(width / 2, 480).createFromHTML(`
-      <input id='confirmar-senha' type='password' placeholder='Confirmar senha' style='width:320px;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff;'>
-    `);
-
-    const cadastrar = this.add.rectangle(width / 2, 550, 320, 52, 0x00aaff, 0.9)
-      .setInteractive({ useHandCursor: true });
-
-    this.add.text(width / 2, 550, 'CADASTRAR', {
-      fontSize: '24px', color: '#ffffff', fontStyle: 'bold'
+    this.add.text(panelX, panelY - panelHeight / 2 + 80, 'REGISTRE-SE', {
+      fontSize: subtitleSize,
+      color: '#ffffff',
+      fontStyle: 'bold',
+      fontFamily: 'Tektur'
     }).setOrigin(0.5);
 
-    const status = this.add.text(width / 2, 515, '', {
-      fontSize: '18px', color: '#ffff00'
+    const nome = this.add.dom(panelX, panelY - 20).createFromHTML(`
+      <div style="width:${inputWidth}px; display:flex; justify-content:center;">
+        <input id='nome' type='text' placeholder='Nome' style='width:100%;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff; font-size:16px;'>
+      </div>
+    `);
+
+    const email = this.add.dom(panelX, panelY + 40).createFromHTML(`
+      <div style="width:${inputWidth}px; display:flex; justify-content:center;">
+        <input id='email' type='email' placeholder='E-mail' style='width:100%;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff; font-size:16px;'>
+      </div>
+    `);
+
+    const senha = this.add.dom(panelX, panelY + 100).createFromHTML(`
+      <div style="width:${inputWidth}px; display:flex; justify-content:center;">
+        <input id='senha' type='password' placeholder='Senha' style='width:100%;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff; font-size:16px;'>
+      </div>
+    `);
+
+    const confirmar = this.add.dom(panelX, panelY + 160).createFromHTML(`
+      <div style="width:${inputWidth}px; display:flex; justify-content:center;">
+        <input id='confirmar-senha' type='password' placeholder='Confirmar senha' style='width:100%;height:44px;padding:10px;border-radius:8px;border:1px solid #00ffff;background:#111;color:#fff; font-size:16px;'>
+      </div>
+    `);
+
+    const cadastrar = this.add.rectangle(panelX, panelY + panelHeight / 2 - 70, inputWidth, 52, 0x00aaff, 0.9)
+      .setInteractive({ useHandCursor: true });
+
+    this.add.text(panelX, panelY + panelHeight / 2 - 70, 'CADASTRAR', {
+      fontSize: '22px',
+      color: '#ffffff',
+      fontStyle: 'bold'
+    }).setOrigin(0.5);
+
+    const status = this.add.text(panelX, panelY + panelHeight / 2 - 120, '', {
+      fontSize: '16px',
+      color: '#ffff00'
     }).setOrigin(0.5);
 
     cadastrar.on('pointerdown', async () => {

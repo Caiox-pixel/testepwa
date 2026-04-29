@@ -270,19 +270,29 @@ export default class UpgradeSystem {
     const cam = this.scene.cameras.main;
     const cx = cam.worldView.x + cam.width / 2;
     const cy = cam.worldView.y + cam.height / 2;
+    const isPortrait = cam.height > cam.width || window.matchMedia?.("(orientation: portrait)")?.matches;
+    const menuWidth = Math.min(cam.width * 0.92, 920);
+    const menuHeight = Math.min(cam.height * 0.92, 720);
+    const titleOffsetY = isPortrait ? -menuHeight / 2 + 60 : -180;
+    const cardWidth = isPortrait ? Math.min(menuWidth * 0.84, 320) : 240;
+    const cardHeight = isPortrait ? 140 : 160;
+    const cardSpacingX = isPortrait ? 0 : 280;
+    const cardSpacingY = cardHeight + 24;
+    const startX = isPortrait ? cx : cx - cardSpacingX;
+    const startY = isPortrait ? cy - menuHeight / 2 + 140 : cy + 20;
 
     this.menuContainer = this.scene.add.container(0, 0).setDepth(9999);
 
     const bg = this.scene.add
-      .rectangle(cx, cy, cam.width, cam.height, 0x000000, 0.75)
+      .rectangle(cx, cy, menuWidth, menuHeight, 0x000000, 0.8)
       .setOrigin(0.5)
       .setScrollFactor(0)
       .setInteractive();
 
     this.menuContainer.add(bg);
 
-    const title = this.scene.add.text(cx, cy - 180, "Escolha um Upgrade", {
-      fontSize: "40px",
+    const title = this.scene.add.text(cx, cy + titleOffsetY, "Escolha um Upgrade", {
+      fontSize: isPortrait ? "32px" : "40px",
       color: "#ffffff",
       fontStyle: "bold",
       stroke: "#000",
@@ -293,11 +303,12 @@ export default class UpgradeSystem {
 
     const options = Phaser.Utils.Array.Shuffle(this.upgrades).slice(0, 3);
 
-    let startX = cx - 280;
-
     options.forEach((upg, i) => {
+      const cardX = isPortrait ? cx : startX + cardSpacingX * i;
+      const cardY = isPortrait ? startY + i * cardSpacingY : cy + 20;
+
       const card = this.scene.add
-        .rectangle(startX + 280 * i, cy + 20, 240, 160, 0x1d1d1d)
+        .rectangle(cardX, cardY, cardWidth, cardHeight, 0x1d1d1d)
         .setStrokeStyle(4, 0x00eaff)
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true });
@@ -314,15 +325,15 @@ export default class UpgradeSystem {
       });
 
       const name = this.scene.add.text(card.x, card.y - 45, upg.name, {
-        fontSize: "20px",
+        fontSize: isPortrait ? "18px" : "20px",
         color: "#00eaff",
         fontStyle: "bold",
       }).setOrigin(0.5);
 
       const desc = this.scene.add.text(card.x, card.y + 10, upg.desc, {
-        fontSize: "16px",
+        fontSize: isPortrait ? "14px" : "16px",
         color: "#ffffff",
-        wordWrap: { width: 200 },
+        wordWrap: { width: cardWidth - 40 },
         align: "center"
       }).setOrigin(0.5);
 

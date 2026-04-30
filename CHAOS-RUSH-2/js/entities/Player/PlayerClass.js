@@ -24,7 +24,7 @@ export const PLAYER_CLASSES = {
 
 animations: {
   idle: { start: 0, end: 0, frameRate: 1, repeat: -1 },
-  walk: { start: 0, end: 7, frameRate: 6.2, repeat: -1 }
+  walk: { start: 0, end: 7, frameRate: 6, repeat: -1 }
 },
     passive: PassiveAlquimista,
     weaponKey: "frascoInstavel",

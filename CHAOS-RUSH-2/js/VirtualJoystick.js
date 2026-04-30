@@ -144,7 +144,7 @@ export default class VirtualJoystick {
         font-size: 11px;
         font-weight: 900;
         letter-spacing: 0.5px;
-        color: rgba(255,220,100,0.90);
+        color: white;
         text-shadow: 0 0 8px rgba(255,160,0,0.70), 0 1px 2px rgba(0,0,0,0.8);
         text-transform: uppercase;
         pointer-events: none;

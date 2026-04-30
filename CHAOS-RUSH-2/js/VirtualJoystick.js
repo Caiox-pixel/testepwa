@@ -120,14 +120,14 @@ export default class VirtualJoystick {
         align-items: center;
         justify-content: center;
         background: radial-gradient(circle at 38% 30%,
-          rgba(255,200,80,0.22) 0%,
-          rgba(255,140,0,0.18) 50%,
-          rgba(180,60,0,0.55) 100%);
-        border: 2px solid rgba(255,180,60,0.40);
+          rgba(255,255,255,0.28) 0%,
+          rgba(120,180,255,0.18) 40%,
+          rgba(40,80,160,0.60) 100%);
+        border: 2px solid rgba(140,200,255,0.45);
         box-shadow:
-          0 0 14px rgba(255,160,0,0.30),
+          0 0 14px rgba(100,160,255,0.35),
           0 3px 10px rgba(0,0,0,0.45),
-          inset 0 1px 0 rgba(255,230,120,0.18);
+          inset 0 1px 0 rgba(255,255,255,0.18);
         backdrop-filter: blur(4px);
         transition: transform 0.08s ease, box-shadow 0.08s ease;
       }

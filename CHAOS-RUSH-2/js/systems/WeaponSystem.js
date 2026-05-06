@@ -97,9 +97,14 @@ export default class WeaponSystem {
     const spread = Phaser.Math.FloatBetween(-0.08, 0.08);
     const finalAngle = baseAngle + spread;
 
+    // deslocar ponto de origem do frasco 60 pixels à frente na direção do alvo
+    const offsetDistance = 60;
+    const spawnX = p.x + Math.cos(baseAngle) * offsetDistance;
+    const spawnY = p.y + Math.sin(baseAngle) * offsetDistance;
+
     // cria frasco
     const flask = scene.physics.add
-      .sprite(p.x, p.y, "flask")
+      .sprite(spawnX, spawnY, "flask")
       .setDepth(5)
       .setTint(getDebuffColor(chosenEffect));
 
@@ -374,10 +379,28 @@ export default class WeaponSystem {
     if (this.cooldowns["foiceEnferrujada"]) return;
     this.startCooldown("foiceEnferrujada", 2500);
 
-    const foice = scene.add
-      .sprite(
+    // encontra o inimigo mais próximo para calcular a direção de spawn
+    const targetEnemy = scene.getClosestEnemy(450);
+    let spawnAngle = 0; // padrão para baixo
+
+    if (targetEnemy) {
+      spawnAngle = Phaser.Math.Angle.Between(
         player.x,
         player.y,
+        targetEnemy.x,
+        targetEnemy.y
+      );
+    }
+
+    // deslocar ponto de origem da foice 60 pixels à frente na direção do alvo
+    const offsetDistance = 60;
+    const spawnX = player.x + Math.cos(spawnAngle) * offsetDistance;
+    const spawnY = player.y + Math.sin(spawnAngle) * offsetDistance;
+
+    const foice = scene.add
+      .sprite(
+        spawnX,
+        spawnY,
         scene.textures.exists("foiceSprite") ? "foiceSprite" : null
       )
       .setDepth(6)

@@ -16,7 +16,7 @@ export default class UpgradeSystem {
         name: "Dano +20%",
         desc: "Aumenta o dano causado.",
         apply: (player) => {
-          player.stats.multiply("damage", 1.20);
+          player.stats.multiply("damage", 1.2);
         },
       },
 
@@ -25,7 +25,7 @@ export default class UpgradeSystem {
         name: "Dano +35%",
         desc: "Aumenta significativamente o dano.",
         apply: (player) => {
-          player.stats.multiply("damage", 35);
+          player.stats.multiply("damage", 1.35);
         },
       },
 

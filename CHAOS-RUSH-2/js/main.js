@@ -68,23 +68,35 @@ const config = {
 
 window.game = new Phaser.Game(config);
 
-const lockPortraitOrientation = () => {
-  const desired = 'portrait-primary';
-  const screenOrientation = screen.orientation || screen.mozOrientation || screen.msOrientation;
-  const lockFn = screenOrientation?.lock || screen.lockOrientation || screen.mozLockOrientation || screen.msLockOrientation;
+// Detectar se é dispositivo mobile
+const isMobileDevice = () => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const mobileRegex = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i;
+  return mobileRegex.test(userAgent) || ('ontouchstart' in window && navigator.maxTouchPoints > 0);
+};
 
-  if (typeof lockFn === 'function') {
-    try {
-      const lockTarget = screenOrientation || screen;
-      const result = lockFn.call(lockTarget, desired);
-      if (result && typeof result.then === 'function') {
-        result.then(() => console.log('[PWA] Orientação travada em retrato'))
-          .catch(err => console.warn('[PWA] Falha ao travar retrato:', err));
-      }
-    } catch (err) {
-      console.warn('[PWA] Orientação retrato não pôde ser aplicada:', err);
-    }
+const lockPortraitOrientation = () => {
+  // Ignorar em desktop
+  if (!isMobileDevice()) return;
+  
+  const desired = 'portrait-primary';
+  
+  // Verificar se screen.orientation.lock está disponível
+  if (!screen.orientation || typeof screen.orientation.lock !== 'function') {
+    console.log('[PWA] screen.orientation.lock() não suportado neste dispositivo');
+    return;
   }
+
+  screen.orientation.lock(desired)
+    .then(() => console.log('[PWA] Orientação travada em retrato'))
+    .catch(err => {
+      // NotSupportedError é normal em alguns dispositivos
+      if (err.name === 'NotSupportedError') {
+        console.log('[PWA] Lock de orientação não suportado neste dispositivo');
+      } else {
+        console.warn('[PWA] Falha ao travar retrato:', err);
+      }
+    });
 };
 
 const resumeAudioOnGesture = () => {
@@ -110,6 +122,11 @@ const resumeAudioOnGesture = () => {
 const updatePortraitOverlay = () => {
   const overlay = document.getElementById('orientation-lock-overlay');
   if (!overlay) return;
+  // Só mostrar overlay se for mobile
+  if (!isMobileDevice()) {
+    overlay.classList.add('hidden');
+    return;
+  }
   const isLandscape = window.innerWidth > window.innerHeight;
   overlay.classList.toggle('hidden', !isLandscape);
 };
@@ -150,32 +167,44 @@ if (screen.orientation && typeof screen.orientation.addEventListener === 'functi
 
 // Detectar instalação do PWA
 let deferredPrompt;
+let installPromptShown = false;
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   console.log("[PWA] Install prompt disponível");
+  
+  // Mostrar prompt no primeiro gesto do usuário
+  if (!installPromptShown) {
+    const showPrompt = () => {
+      if (deferredPrompt && !installPromptShown) {
+        installPromptShown = true;
+        
+        deferredPrompt.prompt().then(() => {
+          return deferredPrompt.userChoice;
+        }).then(choiceResult => {
+          console.log('[PWA] Resultado do prompt de instalação:', choiceResult.outcome);
+          deferredPrompt = null;
+        }).catch(err => {
+          console.warn('[PWA] Erro ao exibir prompt de instalação:', err);
+          deferredPrompt = null;
+          installPromptShown = false;
+        });
+      }
+      
+      window.removeEventListener('pointerdown', showPrompt);
+      window.removeEventListener('touchstart', showPrompt);
+    };
 
-  const promptInstall = () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(choiceResult => {
-      console.log('[PWA] Resultado do prompt de instalação:', choiceResult.outcome);
-      deferredPrompt = null;
-    }).catch(err => {
-      console.warn('[PWA] Falha ao exibir prompt de instalação:', err);
-    });
-    window.removeEventListener('pointerdown', promptInstall);
-    window.removeEventListener('touchstart', promptInstall);
-  };
-
-  window.addEventListener('pointerdown', promptInstall, { once: true });
-  window.addEventListener('touchstart', promptInstall, { once: true });
+    window.addEventListener('pointerdown', showPrompt, { once: true });
+    window.addEventListener('touchstart', showPrompt, { once: true });
+  }
 });
 
 window.addEventListener('appinstalled', () => {
   console.log("[PWA] App instalado com sucesso!");
   deferredPrompt = null;
+  installPromptShown = true;
 });
 
 // Notificar quando estiver online/offline

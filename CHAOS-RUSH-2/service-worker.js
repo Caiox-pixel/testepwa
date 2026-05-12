@@ -36,7 +36,14 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       console.log("[Service Worker] Cache instalado");
-      return cache.addAll(FILES_TO_CACHE);
+      // Cachear arquivos individualmente para não falhar tudo se um falhar
+      return Promise.allSettled(
+        FILES_TO_CACHE.map(file => {
+          return cache.add(file).catch(err => {
+            console.warn(`[Service Worker] Falha ao cachear ${file}:`, err.message);
+          });
+        })
+      );
     })
   );
   self.skipWaiting();

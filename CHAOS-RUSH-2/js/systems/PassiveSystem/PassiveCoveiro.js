@@ -28,7 +28,7 @@ export default class PassiveCoveiro {
     this.ensureHUD();
     this.updateHUD();
 
-    this.spaceHandler = scene.input.keyboard.on("keydown-SPACE", () => {
+    this.spaceHandler = scene.input.keyboard.on("keydown-X", () => {
       if (this.scene.passiveSystem.current !== "coveiro") return;
 
       if (player.kills >= player.nextAscencionAt && !player.isInAscencion) {
@@ -51,7 +51,7 @@ export default class PassiveCoveiro {
     const scene = this.scene;
 
     if (this.spaceHandler) {
-      scene.input.keyboard.off("keydown-SPACE", this.spaceHandler);
+      scene.input.keyboard.off("keydown-X", this.spaceHandler);
       this.spaceHandler = null;
     }
 

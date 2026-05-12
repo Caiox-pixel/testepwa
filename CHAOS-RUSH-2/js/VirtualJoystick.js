@@ -229,9 +229,8 @@ export default class VirtualJoystick {
     }, { passive: false });
 
     this._dash.addEventListener('touchend', e => {
-      e.preventDefault();
       this._dash.classList.remove('pressed');
-    }, { passive: false });
+    });
 
     this._dash.addEventListener('touchcancel', () => {
       this._dash.classList.remove('pressed');
